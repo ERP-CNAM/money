@@ -32,7 +32,7 @@ Le groupe 4 fournit les **paiements bancaires**.
 
 ## 📁 Formats de fichiers attendus
 
-### 1️⃣ `invoices.json` — (fourni par le groupe 2)
+### 1 `invoices.json` — (fourni par le groupe 2)
 
 ```json
 [
@@ -53,7 +53,7 @@ Le groupe 4 fournit les **paiements bancaires**.
 ]
 ```
 
-### 1️⃣ `payments.json` — (fourni par le groupe 4)
+### 2 `payments.json` — (fourni par le groupe 4)
 
 ```json
 [
