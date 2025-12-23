@@ -1,0 +1,14 @@
+[
+    {
+        "paiement_date": "2026-07-01",
+        "facture_ref": "Facture1",
+        "facture_montant": 7.50,
+        "moyen_paiement": "PRELEVEMENT"
+    },
+    {
+        "paiement_date": "2026-07-01",
+        "facture_ref": "Facture2",
+        "facture_montant": 2.00,
+        "moyen_paiement": "CB"
+    }
+]

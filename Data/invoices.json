@@ -1,0 +1,16 @@
+[
+    {
+        "facture_date": "2026-06-30",
+        "ref_facture": "Facture1",
+        "client_id": "C001",
+        "client_nom": "Tintin",
+        "facture_montant": 7.50
+    },
+    {
+        "facture_date": "2026-06-30",
+        "ref_facture": "Facture2",
+        "client_id": "C002",
+        "client_nom": "Castafiore",
+        "facture_montant": 7.50
+    }
+]
