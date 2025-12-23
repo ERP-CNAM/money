@@ -86,23 +86,26 @@ Le groupe 4 fournit les **paiements bancaires**.
 ##  ▶️ Lancer le projet
 Prérequis
 
-.NET SDK 8.0 ou supérieur
+- .NET SDK 8.0 ou supérieur
 
-Commandes
+---
+
+```bash
 dotnet restore
 dotnet build
 dotnet run
+```
 
 Accès à l’application
 
 Une fois lancée, l’application est accessible sur :
 
-http://localhost:5293
+- http://localhost:5293
 
-https://localhost:7114
+- https://localhost:7114
 
 
-📌 Remarques importantes
+## 📌 Remarques importantes
 
 Les données sont chargées depuis des fichiers JSON
 
