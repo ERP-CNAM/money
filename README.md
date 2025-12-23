@@ -32,22 +32,24 @@ Le groupe 4 fournit les **paiements bancaires**.
 
 ## 📁 Formats de fichiers attendus
 
-### 1️⃣ `payments.json` — (fourni par le groupe 4)
+### 1️⃣ `invoices.json` — (fourni par le groupe 2)
 
 ```json
 [
-    {
-        "paiement_date": "2026-07-01",
-        "facture_ref": "Facture1",
-        "facture_montant": 7.50,
-        "moyen_paiement": "PRELEVEMENT"
-    },
-    {
-        "paiement_date": "2026-07-01",
-        "facture_ref": "Facture2",
-        "facture_montant": 2.00,
-        "moyen_paiement": "CB"
-    }
+  {"billingDate" : "2026-06-29",
+   "invoiceRef" : "Facture1",
+   "userId" : "C001",
+   "firstName" : "Tintin",
+   "lastName" : "Toto"
+   "amountInclVat" : 7.50
+  },
+  {"billingDate" : "2026-06-30",
+   "invoiceRef" : "Facture2",
+   "userId" : "C001",
+   "firstName" : "Titi",
+   "lastName" : "Castafiore"
+   "amountInclVat" : 7.50
+  }
 ]
 ```
 
@@ -55,20 +57,17 @@ Le groupe 4 fournit les **paiements bancaires**.
 
 ```json
 [
-    {
-        "facture_date": "2026-06-30",
-        "ref_facture": "Facture1",
-        "client_id": "C001",
-        "client_nom": "Tintin",
-        "facture_montant": 7.50
-    },
-    {
-        "facture_date": "2026-06-30",
-        "ref_facture": "Facture2",
-        "client_id": "C002",
-        "client_nom": "Castafiore",
-        "facture_montant": 7.50
-    }
+  {"executionDate" : "2026-07-01",
+   "invoiceId" : "F001",
+   "amount" : 7.50,
+   "paymentMethod" : SEPA
+  },
+  {
+  "executionDate" : "2026-07-01",
+   "invoiceId" : "F002",
+   "amount" : 7.50,
+   "paymentMethod" : CARD
+  }
 ]
 ```
 
