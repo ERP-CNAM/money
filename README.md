@@ -49,6 +49,7 @@ Le groupe 4 fournit les **paiements bancaires**.
         "moyen_paiement": "CB"
     }
 ]
+```
 
 ### 1️⃣ `payments.json` — (fourni par le groupe 4)
 
@@ -69,7 +70,7 @@ Le groupe 4 fournit les **paiements bancaires**.
         "facture_montant": 7.50
     }
 ]
-
+```
 
 ## ⚙️ Fonctionnalités
 
