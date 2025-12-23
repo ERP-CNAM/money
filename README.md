@@ -49,3 +49,64 @@ Le groupe 4 fournit les **paiements bancaires**.
         "moyen_paiement": "CB"
     }
 ]
+
+### 1️⃣ `payments.json` — (fourni par le groupe 4)
+
+```json
+[
+    {
+        "facture_date": "2026-06-30",
+        "ref_facture": "Facture1",
+        "client_id": "C001",
+        "client_nom": "Tintin",
+        "facture_montant": 7.50
+    },
+    {
+        "facture_date": "2026-06-30",
+        "ref_facture": "Facture2",
+        "client_id": "C002",
+        "client_nom": "Castafiore",
+        "facture_montant": 7.50
+    }
+]
+
+
+## ⚙️ Fonctionnalités
+
+- Connexion simulée
+- Consultation comptable
+- Écritures comptables générales
+- Écritures comptables auxiliaires
+- Relevé des opérations bancaires
+- Gestion des anomalies de paiement
+- Filtres par client, facture et date
+
+
+##  ▶️ Lancer le projet
+Prérequis
+
+.NET SDK 8.0 ou supérieur
+
+Commandes
+dotnet restore
+dotnet build
+dotnet run
+
+Accès à l’application
+
+Une fois lancée, l’application est accessible sur :
+
+http://localhost:5293
+
+https://localhost:7114
+
+
+📌 Remarques importantes
+
+Les données sont chargées depuis des fichiers JSON
+
+Aucune base de données n’est utilisée
+
+La TVA est fixe et simulée
+
+Le projet est prêt à être connecté à une API centrale (CONNECT)
