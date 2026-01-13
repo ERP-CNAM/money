@@ -103,6 +103,17 @@ Une fois lancée, l’application est accessible sur :
 
 - https://localhost:7114
 
+### Docker
+
+```bash
+docker build -t moneyapp .
+docker run --rm -p 8080:8080 moneyapp
+```
+
+Accès via Docker
+
+- http://localhost:8080
+
 
 ## 📌 Remarques importantes
 
