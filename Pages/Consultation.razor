@@ -1,6 +1,8 @@
 @page "/consultation"
 @inject Services.JsonDataService Data
 @inject Services.AccountingGenerator Generator
+@inject Services.CSVBuilder CsvBuilder
+@inject IJSRuntime JS
 
 <h3>Consultation</h3>
 
@@ -32,6 +34,11 @@ else
             <div class="col-12 mt-2">
                 <button class="btn btn-secondary" @onclick="ApplyFilters">Filtrer</button>
                 <button class="btn btn-outline-secondary ms-2" @onclick="ResetFilters">Reset</button>
+
+                <button class="btn btn-outline-primary ms-2" @onclick="DownloadCsv">
+                    Télécharger CSV
+                </button>
+
             </div>
         </div>
     </div>
@@ -248,4 +255,25 @@ else
     }
 
     private static string Fmt(decimal x) => x == 0 ? "" : x.ToString("0.00");
+
+    private async Task DownloadCsv()
+    {
+        var (fileName, csv) = ActiveTab switch
+        {
+            "general" => ($"ecritures_generales_{DateTime.Now:yyyyMMdd_HHmm}.csv", CsvBuilder.BuildGeneralCsv(ViewGeneral)),
+            "aux" => ($"ecritures_auxiliaires_{DateTime.Now:yyyyMMdd_HHmm}.csv", CsvBuilder.BuildAuxCsv(ViewAux)),
+            _ => ($"releve_bancaire_{DateTime.Now:yyyyMMdd_HHmm}.csv", CsvBuilder.BuildBankCsv(ViewBank)),
+        };
+
+        var utf8Bom = new byte[] { 0xEF, 0xBB, 0xBF };
+        var bytes = utf8Bom.Concat(System.Text.Encoding.UTF8.GetBytes(csv)).ToArray();
+
+        await DownloadBytes(fileName, "text/csv;charset=utf-8", bytes);
+    }
+
+    private async Task DownloadBytes(string fileName, string contentType, byte[] bytes)
+    {
+        var base64 = Convert.ToBase64String(bytes);
+        await JS.InvokeVoidAsync("downloadFileFromBytes", fileName, contentType, base64);
+    }
 }

@@ -12,6 +12,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<JsonDataService>();
 builder.Services.AddSingleton<AccountingGenerator>();
 
+// Service telechargement
+builder.Services.AddScoped<MoneyApp.Services.CSVBuilder>();
+
 var app = builder.Build();
 
 // Pipeline HTTP
