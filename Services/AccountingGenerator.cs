@@ -14,17 +14,17 @@ public sealed class AccountingGenerator
 
         foreach (var inv in invoices)
         {
-            var ttc = Round2(inv.FactureMontant);
+            var ttc = Round2(inv.Facture_Montant);
             var ht = Round2(ttc / (1m + TvaRate));
             var tva = Round2(ttc - ht);
 
             // 700 Produit (Crédit HT)
             general.Add(new GeneralEntryRow
             {
-                Date = inv.FactureDate,
+                Date = inv.Facture_Date,
                 Compte = "700",
                 Description = "Produit",
-                Ref = inv.RefFacture,
+                Ref = inv.Ref_Facture,
                 Debit = 0,
                 Credit = ht
             });
@@ -32,10 +32,10 @@ public sealed class AccountingGenerator
             // 445 TVA (Crédit TVA)
             general.Add(new GeneralEntryRow
             {
-                Date = inv.FactureDate,
+                Date = inv.Facture_Date,
                 Compte = "445",
                 Description = "TVA",
-                Ref = inv.RefFacture,
+                Ref = inv.Ref_Facture,
                 Debit = 0,
                 Credit = tva
             });
@@ -43,10 +43,10 @@ public sealed class AccountingGenerator
             // 411 Client (Débit TTC)
             general.Add(new GeneralEntryRow
             {
-                Date = inv.FactureDate,
+                Date = inv.Facture_Date,
                 Compte = "411",
                 Description = "Client",
-                Ref = inv.RefFacture,
+                Ref = inv.Ref_Facture,
                 Debit = ttc,
                 Credit = 0
             });
@@ -54,9 +54,9 @@ public sealed class AccountingGenerator
             // Auxiliaire : suivi client Débit TTC
             aux.Add(new AuxEntryRow
             {
-                Date = inv.FactureDate,
-                Nom = inv.ClientNom,
-                Ref = inv.RefFacture,
+                Date = inv.Facture_Date,
+                Nom = inv.Client_Nom,
+                Ref = inv.Ref_Facture,
                 Debit = ttc,
                 Credit = 0
             });
@@ -73,27 +73,27 @@ public sealed class AccountingGenerator
         var bank = new List<BankStatementRow>();
 
         var invoiceByRef = invoices
-            .GroupBy(i => i.RefFacture)
+            .GroupBy(i => i.Ref_Facture)
             .ToDictionary(g => g.Key, g => g.First());
 
         foreach (var pay in payments)
         {
-            var amount = Round2(pay.FactureMontant);
+            var amount = Round2(pay.Facture_Montant);
 
             // statut & nom client
             string statut;
             string clientNom;
 
-            if (!invoiceByRef.TryGetValue(pay.FactureRef, out var inv))
+            if (!invoiceByRef.TryGetValue(pay.Facture_Ref, out var inv))
             {
                 statut = "UNKNOWN_INVOICE";
                 clientNom = "Inconnu";
             }
             else
             {
-                clientNom = inv.ClientNom;
+                clientNom = inv.Client_Nom;
 
-                var invoiceAmount = Round2(inv.FactureMontant);
+                var invoiceAmount = Round2(inv.Facture_Montant);
                 if (Math.Abs(invoiceAmount - amount) <= 0.01m)
                     statut = "MATCHED";
                 else
@@ -103,9 +103,9 @@ public sealed class AccountingGenerator
             // bank row (toujours affiché)
             bank.Add(new BankStatementRow
             {
-                Date = pay.PaiementDate,
-                Ref = pay.FactureRef,
-                Description = pay.MoyenPaiement,
+                Date = pay.Paiement_Date,
+                Ref = pay.Facture_Ref,
+                Description = pay.Moyen_Paiement,
                 Nom = clientNom,
                 Montant = amount,
                 Statut = statut
@@ -117,29 +117,29 @@ public sealed class AccountingGenerator
 
             general.Add(new GeneralEntryRow
             {
-                Date = pay.PaiementDate,
+                Date = pay.Paiement_Date,
                 Compte = "511",
                 Description = "Banque",
-                Ref = pay.FactureRef,
+                Ref = pay.Facture_Ref,
                 Debit = amount,
                 Credit = 0
             });
 
             general.Add(new GeneralEntryRow
             {
-                Date = pay.PaiementDate,
+                Date = pay.Paiement_Date,
                 Compte = "411",
                 Description = "Client",
-                Ref = pay.FactureRef,
+                Ref = pay.Facture_Ref,
                 Debit = 0,
                 Credit = amount
             });
 
             aux.Add(new AuxEntryRow
             {
-                Date = pay.PaiementDate,
+                Date = pay.Paiement_Date,
                 Nom = clientNom,
-                Ref = pay.FactureRef,
+                Ref = pay.Facture_Ref,
                 Debit = 0,
                 Credit = amount
             });
