@@ -2,8 +2,8 @@ namespace MoneyApp.Models;
 
 public sealed class PaymentDto
 {
-    public DateOnly PaiementDate { get; set; }
-    public string FactureRef { get; set; } = "";
-    public decimal FactureMontant { get; set; }
-    public string MoyenPaiement { get; set; } = ""; // PRELEVEMENT / CB
+    public DateOnly Paiement_Date { get; set; }
+    public string Facture_Ref { get; set; } = "";
+    public decimal Facture_Montant { get; set; }
+    public string Moyen_Paiement { get; set; } = ""; // PRELEVEMENT / CB
 }
