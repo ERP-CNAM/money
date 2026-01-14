@@ -1,25 +1,51 @@
 @page "/login"
 @inject NavigationManager Nav
+@inject MoneyApp.Services.AuthService Auth
 
 <h3>Connexion</h3>
 
 <div style="max-width:420px">
-    <label>Utilisateur</label>
-    <input class="form-control" @bind="Username" />
+    <label>Email</label>
+    <input class="form-control" @bind="Email" />
 
     <label class="mt-2">Mot de passe</label>
     <input type="password" class="form-control" @bind="Password" />
 
-    <button class="btn btn-primary mt-3" @onclick="Connect">Se connecter</button>
+    <button class="btn btn-primary mt-3" @onclick="Connect" disabled="@Loading">
+        @(Loading ? "Connexion..." : "Se connecter")
+    </button>
+
+    @if (!string.IsNullOrWhiteSpace(Error))
+    {
+        <div class="alert alert-danger mt-3">@Error</div>
+    }
 </div>
 
 @code {
-    private string Username = "";
+    private string Email = "";
     private string Password = "";
+    private bool Loading;
+    private string? Error;
 
-    private void Connect()
+    private async Task Connect()
     {
-        // Simulation : on ne vérifie rien pour l’instant
-        Nav.NavigateTo("/consultation");
+        Error = null;
+        Loading = true;
+
+        try
+        {
+            var (ok, error) = await Auth.LoginAsync(Email, Password);
+            if (!ok)
+            {
+                Error = error ?? "Identifiants invalides.";
+                return;
+            }
+
+            Nav.NavigateTo("/consultation");
+        }
+        finally
+        {
+            Loading = false;
+        }
     }
 }
