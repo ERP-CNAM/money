@@ -10,19 +10,12 @@
     <label class="mt-2">Mot de passe</label>
     <input type="password" class="form-control" @bind="Password" />
 
-    <label class="mt-2">Rôle</label>
-    <select class="form-select" @bind="Role">
-        <option value="Comptable">Comptable</option>
-        <option value="Lecture">Lecture seule</option>
-    </select>
-
     <button class="btn btn-primary mt-3" @onclick="Connect">Se connecter</button>
 </div>
 
 @code {
     private string Username = "";
     private string Password = "";
-    private string Role = "Comptable";
 
     private void Connect()
     {
