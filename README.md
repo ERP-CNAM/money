@@ -114,12 +114,29 @@ Accès via Docker
 
 - http://localhost:8080
 
+### Docker (MySQL)
+
+```bash
+docker compose up -d
+```
+
+Connexion
+
+- host: localhost
+- port: 3306
+- database: moneyapp
+- user: moneyapp
+- password: moneyapp
+- root password: root
+
+Le script `docker/mysql/init.sql` crée les tables `invoices` et `payments` et insère des données d’exemple au premier démarrage.
+
 
 ## 📌 Remarques importantes
 
 Les données sont chargées depuis des fichiers JSON
 
-Aucune base de données n’est utilisée
+Aucune base de données n’est requise pour l’application, mais un conteneur MySQL est disponible pour les tests
 
 La TVA est fixe et simulée
 
