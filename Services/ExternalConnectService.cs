@@ -19,7 +19,7 @@ namespace MoneyApp.Services
         {
             var requestObj = new
             {
-                apiKey = "changethis", //TODO : recuperer de .env
+                apiKey = Environment.GetEnvironmentVariable("CONNECT_API_KEY"), 
                 clientName = "money",
                 clientVersion = "",
                 serviceName = "back",
@@ -28,7 +28,7 @@ namespace MoneyApp.Services
                 payload = ""
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Get, Environment.GetEnvironmentVariable("CONNECT_URL") +"/connect") //TODO : recuperer de .env
+            var request = new HttpRequestMessage(HttpMethod.Get, Environment.GetEnvironmentVariable("CONNECT_URL") +"/connect") 
             {
                 Content = JsonContent.Create(requestObj)
             };
@@ -44,7 +44,7 @@ namespace MoneyApp.Services
         {
             var requestObj = new
             {
-                apiKey = "changethis",
+                apiKey = Environment.GetEnvironmentVariable("CONNECT_API_KEY"),
                 clientName = "money",
                 clientVersion = "",
                 serviceName = "back",

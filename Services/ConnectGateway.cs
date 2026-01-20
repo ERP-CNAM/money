@@ -29,7 +29,7 @@ public sealed class ConnectGateway
         string? jwt = null,
         CancellationToken ct = default)
     {
-        var baseUrl = _cfg["Connect:BaseUrl"];
+        var baseUrl = Environment.GetEnvironmentVariable("CONNECT_URL");
         if (string.IsNullOrWhiteSpace(baseUrl))
         {
             return ConnectResponse<T>.Fail("Connect:BaseUrl non configurée");
