@@ -35,13 +35,16 @@
         try
         {
             var (ok, error) = await Auth.LoginAsync(Email, Password);
+
             if (!ok)
             {
+                // Effacer le mot de passe en cas d'échec
+                Password = "";
                 Error = error ?? "Identifiants invalides.";
                 return;
             }
 
-            Nav.NavigateTo("/consultation");
+            Nav.NavigateTo("/consultation", true);
         }
         finally
         {

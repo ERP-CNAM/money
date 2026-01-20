@@ -1,4 +1,6 @@
-﻿namespace MoneyApp.Services;
+﻿using System.Text.Json;
+
+namespace MoneyApp.Services;
 
 public sealed class AuthService
 {
@@ -13,52 +15,76 @@ public sealed class AuthService
 
     public async Task<(bool ok, string? error)> LoginAsync(string email, string password, CancellationToken ct = default)
     {
-        // BACK: POST /auth/login :contentReference[oaicite:7]{index=7}
-        var payloadToBack = new
-        {
-            email,       // :contentReference[oaicite:8]{index=8}
-            password     // :contentReference[oaicite:9]{index=9}
-        };
+        var payloadToBack = new { email, password };
 
-        // ChangeThis: si CONNECT attend un autre "serviceName"
-        var res = await _connect.PostAsync<BackLoginApiResponse>(
+        // ✅ On demande un JsonElement pour supporter TOUS les formats CONNECT
+        var res = await _connect.PostAsync<JsonElement>(
             serviceName: "back",
             path: "/auth/login",
             payload: payloadToBack,
             jwt: null,
             ct: ct);
 
-        // Cas erreurs connect / format wrapper
-        if (!res.Success || res.Payload is null)
+        if (!res.Success)
+            return (false, res.Error ?? "Erreur CONNECT.");
+
+        if (res.Payload.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null)
+            return (false, "Réponse CONNECT vide.");
+
+        var root = res.Payload;
+
+        // -----------------------------
+        // FORMAT B (logs CONNECT) :
+        // { request: { success, message }, data: { payloadOut: { token } } }
+        // -----------------------------
+        if (root.TryGetProperty("request", out var requestEl))
         {
-            // ChangeThis: message erreur plus précis si CONNECT renvoie autre chose
-            return (false, res.Error ?? $"Connexion refusée (status {res.Status}).");
+            var ok = requestEl.TryGetProperty("success", out var sEl) && sEl.ValueKind == JsonValueKind.True;
+            var msg = requestEl.TryGetProperty("message", out var mEl) ? mEl.GetString() : null;
+
+            if (!ok)
+                return (false, msg ?? "Identifiants invalides.");
+
+            if (!root.TryGetProperty("data", out var dataEl))
+                return (false, "Réponse CONNECT invalide: champ 'data' manquant.");
+
+            if (!dataEl.TryGetProperty("payloadOut", out var payloadOutEl))
+                return (false, "Réponse CONNECT invalide: champ 'data.payloadOut' manquant.");
+
+            var token = payloadOutEl.TryGetProperty("token", out var tokenEl) ? tokenEl.GetString() : null;
+
+            if (string.IsNullOrWhiteSpace(token))
+                return (false, "Token manquant (data.payloadOut.token).");
+
+            await _authState.SetJwtAsync(token);
+            return (true, null);
         }
 
-        // BACK renvoie BaseAPIResponse + payload.token 
-        if (!res.Payload.Success)
-            return (false, res.Payload.Message ?? "Identifiants invalides.");
+        // -----------------------------
+        // FORMAT A (Postman CONNECT) :
+        // { success, status, message, payload: { token, user } }
+        // -----------------------------
+        if (root.TryGetProperty("success", out var topSuccessEl))
+        {
+            var ok = topSuccessEl.ValueKind == JsonValueKind.True;
+            var msg = root.TryGetProperty("message", out var topMsgEl) ? topMsgEl.GetString() : null;
 
-        var token = res.Payload.Payload?.Token;
+            if (!ok)
+                return (false, msg ?? "Identifiants invalides.");
 
-        if (string.IsNullOrWhiteSpace(token))
-            return (false, "Token manquant dans la réponse du BACK (payload.token attendu).");
+            if (!root.TryGetProperty("payload", out var payloadEl))
+                return (false, "Réponse CONNECT invalide: champ 'payload' manquant.");
 
-        await _authState.SetJwtAsync(token);
-        return (true, null);
-    }
+            var token = payloadEl.TryGetProperty("token", out var tokenEl) ? tokenEl.GetString() : null;
 
-    // Modèle basé sur BaseAPIResponse + payload(LoginResponse) 
-    private sealed class BackLoginApiResponse
-    {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
-        public BackLoginPayload? Payload { get; set; }
-    }
+            if (string.IsNullOrWhiteSpace(token))
+                return (false, "Token manquant (payload.token).");
 
-    private sealed class BackLoginPayload
-    {
-        public string? Token { get; set; } // LoginResponse.token :contentReference[oaicite:12]{index=12}
-        // public object? User { get; set; } // possible, mais pas utile maintenant
+            await _authState.SetJwtAsync(token);
+            return (true, null);
+        }
+
+        // Si aucun des formats n'est reconnu
+        return (false, "Réponse CONNECT inconnue (format non supporté).");
     }
 }

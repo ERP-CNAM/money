@@ -17,6 +17,7 @@ builder.Services.AddSingleton<AccountingGenerator>();
 builder.Services.AddScoped<MoneyApp.Services.CSVBuilder>();
 
 builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage>();
 
 // Stockage JWT côté navigateur (Blazor Server)
 builder.Services.AddScoped<ProtectedSessionStorage>();
@@ -25,6 +26,8 @@ builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthState>();
 builder.Services.AddScoped<ConnectGateway>();
 builder.Services.AddScoped<AuthService>();
+
+
 
 var app = builder.Build();
 

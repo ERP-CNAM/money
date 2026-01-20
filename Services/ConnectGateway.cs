@@ -1,6 +1,7 @@
-﻿//Tout ce qui dépend du format exact CONNECT est marqué ChangeThis.
-
-using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 
 namespace MoneyApp.Services;
@@ -10,6 +11,11 @@ public sealed class ConnectGateway
     private readonly HttpClient _http;
     private readonly IConfiguration _cfg;
 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public ConnectGateway(HttpClient http, IConfiguration cfg)
     {
         _http = http;
@@ -17,130 +23,88 @@ public sealed class ConnectGateway
     }
 
     public async Task<ConnectResponse<T>> PostAsync<T>(
-    string serviceName,
-    string path,
-    object payload,
-    string? jwt = null,
-    CancellationToken ct = default)
+        string serviceName,
+        string path,
+        object payload,
+        string? jwt = null,
+        CancellationToken ct = default)
     {
-        // ChangeThis: URL de CONNECT (ex: http://localhost:8000)
-        var connectBaseUrl = _cfg["Connect:BaseUrl"];
-
-        if (string.IsNullOrWhiteSpace(connectBaseUrl) || connectBaseUrl == "ChangeThis")
+        var baseUrl = _cfg["Connect:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(baseUrl))
         {
-            return new ConnectResponse<T>
-            {
-                Success = false,
-                Status = 0,
-                Error = "ChangeThis: Connect:BaseUrl n'est pas configurée (ex: http://localhost:8000).",
-                Payload = default
-            };
+            return ConnectResponse<T>.Fail("Connect:BaseUrl non configurée");
         }
 
-        if (!Uri.TryCreate(connectBaseUrl, UriKind.Absolute, out var baseUri))
-        {
-            return new ConnectResponse<T>
-            {
-                Success = false,
-                Status = 0,
-                Error = "ChangeThis: Connect:BaseUrl n'est pas une URL absolue valide.",
-                Payload = default
-            };
-        }
+        var url = new Uri(new Uri(baseUrl), "/connect");
 
-        // ChangeThis: endpoint CONNECT (par défaut /connect)
-        var connectUri = new Uri(baseUri, "/connect");
-
-        var req = new ConnectRequest
+        var request = new ConnectRequest
         {
-            // ChangeThis: valeurs attendues par CONNECT
-            ClientName = _cfg["Connect:ClientName"] ?? "ChangeThis",
-            ClientVersion = _cfg["Connect:ClientVersion"] ?? "ChangeThis",
+            ClientName = _cfg["Connect:ClientName"] ?? "money",
+            ClientVersion = _cfg["Connect:ClientVersion"] ?? "1.0.0",
             ServiceName = serviceName,
             Path = path,
             Debug = false,
             Payload = payload
         };
 
-        using var message = new HttpRequestMessage(HttpMethod.Post, connectUri)
+        var json = JsonSerializer.Serialize(request);
+
+        using var msg = new HttpRequestMessage(HttpMethod.Post, url)
         {
-            Content = JsonContent.Create(req)
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
 
-        // JWT si nécessaire sur les routes protégées
+        msg.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         if (!string.IsNullOrWhiteSpace(jwt))
-        {
-            message.Headers.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
-        }
+            msg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
         HttpResponseMessage resp;
         try
         {
-            resp = await _http.SendAsync(message, ct);
+            resp = await _http.SendAsync(msg, ct);
         }
-        catch (HttpRequestException)
+        catch (Exception ex)
         {
-            return new ConnectResponse<T>
-            {
-                Success = false,
-                Status = 0,
-                Error = "ChangeThis: Impossible de contacter CONNECT (service arrêté ou URL incorrecte).",
-                Payload = default
-            };
+            return ConnectResponse<T>.Fail($"CONNECT inaccessible: {ex.Message}");
         }
 
-        ConnectResponse<T>? wrapper;
+        var raw = await resp.Content.ReadAsStringAsync(ct);
+
+        Console.WriteLine("=== CONNECT RAW ===");
+        Console.WriteLine(raw);
+        Console.WriteLine("===================");
+
         try
         {
-            wrapper = await resp.Content.ReadFromJsonAsync<ConnectResponse<T>>(cancellationToken: ct);
+            var envelope = JsonSerializer.Deserialize<T>(raw, JsonOptions);
+            if (envelope is null)
+                return ConnectResponse<T>.Fail("Réponse CONNECT vide");
+
+            return ConnectResponse<T>.Ok(envelope);
         }
-        catch
+        catch (Exception ex)
         {
-            return new ConnectResponse<T>
-            {
-                Success = false,
-                Status = (int)resp.StatusCode,
-                Error = "ChangeThis: Réponse CONNECT non désérialisable.",
-                Payload = default
-            };
+            return ConnectResponse<T>.Fail($"Désérialisation impossible: {ex.Message}");
         }
-
-        if (wrapper is null)
-        {
-            return new ConnectResponse<T>
-            {
-                Success = false,
-                Status = (int)resp.StatusCode,
-                Error = "ChangeThis: Réponse CONNECT vide ou inattendue.",
-                Payload = default
-            };
-        }
-
-        if (wrapper.Status == 0)
-            wrapper.Status = (int)resp.StatusCode;
-
-        return wrapper;
     }
 
-
-    // ChangeThis: structure requête CONNECT (si champs différents)
     private sealed class ConnectRequest
     {
-        public string ClientName { get; set; } = "";
-        public string ClientVersion { get; set; } = "";
-        public string ServiceName { get; set; } = "";
-        public string Path { get; set; } = "";
-        public bool Debug { get; set; }
-        public object Payload { get; set; } = new();
+        [JsonPropertyName("clientName")] public string ClientName { get; set; } = "";
+        [JsonPropertyName("clientVersion")] public string ClientVersion { get; set; } = "";
+        [JsonPropertyName("serviceName")] public string ServiceName { get; set; } = "";
+        [JsonPropertyName("path")] public string Path { get; set; } = "";
+        [JsonPropertyName("debug")] public bool Debug { get; set; }
+        [JsonPropertyName("payload")] public object Payload { get; set; } = new();
     }
 }
 
-// ChangeThis: structure réponse CONNECT (si champs différents)
 public sealed class ConnectResponse<T>
 {
     public bool Success { get; set; }
-    public int Status { get; set; }
     public string? Error { get; set; }
     public T? Payload { get; set; }
+
+    public static ConnectResponse<T> Ok(T payload) => new() { Success = true, Payload = payload };
+    public static ConnectResponse<T> Fail(string error) => new() { Success = false, Error = error };
 }
