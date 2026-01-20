@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.EntityFrameworkCore;
 using MoneyApp.Data;
+
 using MoneyApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-// Services m�tier
+// Services métier
 builder.Services.AddScoped<JsonDataService>();
 builder.Services.AddSingleton<AccountingGenerator>();
 
@@ -32,6 +34,18 @@ var connectionString =
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage>();
+
+// Stockage JWT côté navigateur (Blazor Server)
+builder.Services.AddScoped<ProtectedSessionStorage>();
+
+// Auth + gateway
+builder.Services.AddScoped<AuthState>();
+builder.Services.AddScoped<ConnectGateway>();
+builder.Services.AddScoped<AuthService>();
+
 
 var app = builder.Build();
 
