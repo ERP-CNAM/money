@@ -14,20 +14,23 @@ namespace MoneyApp.Services
 
         public async Task<List<InvoiceApiDto>> FetchInvoicesAsync()
         {
-            var url =
-                "http://localhost:8000/connect" +
-                "?apiKey=changethis" +
-                "&clientName=money" +
-                "&clientVersion=" +
-                "&serviceName=back" +
-                "&path=/invoices" +
-                "&debug=true"+
-                "&payload=";
+            var requestObj = new
+            {
+                apiKey = "changethis",
+                clientName = "money",
+                clientVersion = "",
+                serviceName = "back",
+                path = "/invoices",
+                debug = true,
+                payload = ""
+            };
 
-            _http.DefaultRequestHeaders.Accept.Clear();
-            _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:8000/connect")
+            {
+                Content = JsonContent.Create(requestObj)
+            };
 
-            var response = await _http.GetAsync(url);
+            var response = await _http.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ConnectResponseDto<InvoiceApiDto>>();

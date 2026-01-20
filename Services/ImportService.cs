@@ -26,6 +26,7 @@ namespace MoneyApp.Services
                     {
                         RefFacture = dto.Ref_Facture,
                         FactureDate = dto.Facture_Date,
+                        ClientId = dto.Client_Id,
                         ClientNom = dto.Client_Nom,
                         FactureMontant = dto.Facture_Montant
                     });
@@ -33,6 +34,7 @@ namespace MoneyApp.Services
                 else
                 {
                     existing.FactureDate = dto.Facture_Date;
+                    existing.ClientId = dto.Client_Id;
                     existing.ClientNom = dto.Client_Nom;
                     existing.FactureMontant = dto.Facture_Montant;
                 }

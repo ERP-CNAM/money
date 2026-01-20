@@ -41,11 +41,6 @@ namespace MoneyApp.Services
             // DB
             await _import.ImportInvoicesAsync(invoices);
 
-            // DB → JSON
-            var invoicesPath = Path.Combine(_env.ContentRootPath, "Data", "invoices.json");
-            var paymentsPath = Path.Combine(_env.ContentRootPath, "Data", "payments.json");
-
-            await _export.ExportAllAsync(invoicesPath, paymentsPath);
         }
         private async Task ExportDatabaseAsync()
         {
