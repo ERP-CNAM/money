@@ -24,12 +24,12 @@ namespace MoneyApp.Services
         public async Task SyncAsync()
         {
             await SyncInvoicesAsync();
+            await SyncPaymentsAsync();
             await ExportDatabaseAsync();
         }
 
         public async Task SyncInvoicesAsync()
         {
-            Console.WriteLine("IMPORT");
             // API → DTO API
             var apiInvoices = await _external.FetchInvoicesAsync();
 
@@ -42,9 +42,23 @@ namespace MoneyApp.Services
             await _import.ImportInvoicesAsync(invoices);
 
         }
+
+        public async Task SyncPaymentsAsync()
+        {
+            // API → DTO API
+            var apiPayments = await _external.FetchPaymentsAsync();
+
+            // Mapping
+            var payments = apiPayments
+                .Select(i => i.ToPaymentDto())
+                .ToList();
+
+            // DB
+            await _import.ImportPaymentsAsync(payments);
+
+        }
         private async Task ExportDatabaseAsync()
         {
-            Console.WriteLine("EXPORT");
             var invoicesPath = Path.Combine(_env.ContentRootPath, "Data", "invoices.json");
             var paymentsPath = Path.Combine(_env.ContentRootPath, "Data", "payments.json");
 

@@ -42,5 +42,33 @@ namespace MoneyApp.Services
 
             await _db.SaveChangesAsync();
         }
+
+        public async Task ImportPaymentsAsync(List<PaymentDto> payments)
+        {
+            foreach (var dto in payments)
+            {
+                var existing = await _db.Payments
+                    .FirstOrDefaultAsync(i => i.FactureRef == dto.Facture_Ref);
+
+                if (existing == null)
+                {
+                    _db.Payments.Add(new PaymentEntity
+                    {
+                        FactureRef = dto.Facture_Ref,
+                        PaiementDate = dto.Paiement_Date,
+                        FactureMontant = dto.Facture_Montant,
+                        MoyenPaiement = dto.Moyen_Paiement
+                    });
+                }
+                else
+                {
+                    existing.PaiementDate = dto.Paiement_Date;
+                    existing.MoyenPaiement = dto.Moyen_Paiement;
+                    existing.FactureMontant = dto.Facture_Montant;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+        }
     }
 }
