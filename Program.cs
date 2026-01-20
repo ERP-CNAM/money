@@ -19,6 +19,12 @@ builder.Services.AddScoped<MoneyApp.Services.CSVBuilder>();
 
 //service bdd
 builder.Services.AddScoped<ExportService>();
+builder.Services.AddScoped<ImportService>();
+
+builder.Services.AddScoped<DataSyncService>();
+
+builder.Services.AddHttpClient<ExternalConnectService>();
+builder.Services.AddScoped<ExternalConnectService>();
 
 //db connection
 var connectionString =

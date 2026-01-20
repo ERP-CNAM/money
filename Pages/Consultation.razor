@@ -1,5 +1,6 @@
 @page "/consultation"
 @inject Services.JsonDataService Data
+@inject Services.DataSyncService SyncService
 @inject Services.AccountingGenerator Generator
 @inject Services.CSVBuilder CsvBuilder
 @inject IJSRuntime JS
@@ -198,6 +199,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await SyncService.SyncAsync();
+
         Invoices = await Data.LoadInvoicesAsync();
         Payments = await Data.LoadPaymentsAsync();
 
