@@ -6,10 +6,12 @@ namespace MoneyApp.Services;
 public sealed class JsonDataService
 {
     private readonly IWebHostEnvironment _env;
+    private readonly ExportService _exporter;
 
-    public JsonDataService(IWebHostEnvironment env)
+    public JsonDataService(IWebHostEnvironment env, ExportService exporter)
     {
         _env = env;
+        _exporter = exporter;
     }
 
     public async Task<List<InvoiceDto>> LoadInvoicesAsync()
@@ -31,6 +33,7 @@ public sealed class JsonDataService
 
     public async Task<List<PaymentDto>> LoadPaymentsAsync()
     {
+
         var path = Path.Combine(_env.ContentRootPath, "Data", "payments.json");
         var json = await File.ReadAllTextAsync(path);
 

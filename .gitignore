@@ -15,3 +15,5 @@ obj/
 
 ## Secrets
 appsettings.Development.json
+
+.env
