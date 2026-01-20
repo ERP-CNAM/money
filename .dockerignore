@@ -12,3 +12,6 @@ Dockerfile
 .dockerignore
 
 money-main/
+
+.env*
+.env

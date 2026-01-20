@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.EntityFrameworkCore;
 using MoneyApp.Data;
+using DotNetEnv;
 
 using MoneyApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 // Services framework
 builder.Services.AddRazorPages();
@@ -29,8 +32,8 @@ builder.Services.AddHttpClient<ExternalConnectService>();
 builder.Services.AddScoped<ExternalConnectService>();
 
 //db connection
-var connectionString =
-    "Server=localhost;Port=3306;Database=moneyapp;User=moneyapp;Password=moneyapp;";
+var connectionString = "Server=" + Environment.GetEnvironmentVariable("DATABASE_URL") + ";Port=" + Environment.GetEnvironmentVariable("DATABASE_PORT") + ";Database=" + Environment.GetEnvironmentVariable("DATABASE_DATABASE") + "; User=" + Environment.GetEnvironmentVariable("DATABASE_USER")+ ";Password=" + Environment.GetEnvironmentVariable("DATABASE_PASSWORD") + ";"; //TODO : recuperer du .env
+Console.WriteLine(connectionString);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));

@@ -6,17 +6,20 @@ namespace MoneyApp.Services
     public class ExternalConnectService
     {
         private readonly HttpClient _http;
+        private readonly IConfiguration _config;
 
-        public ExternalConnectService(HttpClient http)
+
+        public ExternalConnectService(HttpClient http, IConfiguration config)
         {
             _http = http;
+            _config = config;
         }
 
         public async Task<List<InvoiceApiDto>> FetchInvoicesAsync()
         {
             var requestObj = new
             {
-                apiKey = "changethis",
+                apiKey = "changethis", //TODO : recuperer de .env
                 clientName = "money",
                 clientVersion = "",
                 serviceName = "back",
@@ -25,7 +28,7 @@ namespace MoneyApp.Services
                 payload = ""
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:8000/connect")
+            var request = new HttpRequestMessage(HttpMethod.Get, Environment.GetEnvironmentVariable("CONNECT_URL") +"/connect") //TODO : recuperer de .env
             {
                 Content = JsonContent.Create(requestObj)
             };
@@ -50,7 +53,7 @@ namespace MoneyApp.Services
                 payload = ""
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:8000/connect")
+            var request = new HttpRequestMessage(HttpMethod.Get, Environment.GetEnvironmentVariable("CONNECT_URL") + "/connect")
             {
                 Content = JsonContent.Create(requestObj)
             };
