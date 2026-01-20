@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "Facture_Date": "2026-06-30",
+    "Ref_Facture": "Facture1",
+    "Client_Id": "C001",
+    "Client_Nom": "Tintin",
+    "Facture_Montant": 7.50
+  },
+  {
+    "Facture_Date": "2026-06-30",
+    "Ref_Facture": "Facture2",
+    "Client_Id": "C002",
+    "Client_Nom": "Castafiore",
+    "Facture_Montant": 7.50
+  },
+  {
+    "Facture_Date": "2025-07-31",
+    "Ref_Facture": "INV-2025-07-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 15.00
+  },
+  {
+    "Facture_Date": "2025-08-31",
+    "Ref_Facture": "INV-2025-08-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 15.00
+  },
+  {
+    "Facture_Date": "2025-09-30",
+    "Ref_Facture": "INV-2025-09-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 16.50
+  },
+  {
+    "Facture_Date": "2025-10-31",
+    "Ref_Facture": "INV-2025-10-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 13.50
+  },
+  {
+    "Facture_Date": "2025-11-30",
+    "Ref_Facture": "INV-2025-11-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 18.00
+  },
+  {
+    "Facture_Date": "2025-12-31",
+    "Ref_Facture": "INV-2025-12-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 15.00
+  },
+  {
+    "Facture_Date": "2026-01-31",
+    "Ref_Facture": "INV-2026-01-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 14.25
+  },
+  {
+    "Facture_Date": "2026-02-28",
+    "Ref_Facture": "INV-2026-02-JOHN-ef0859",
+    "Client_Id": "",
+    "Client_Nom": "John Doe",
+    "Facture_Montant": 15.75
+  }
+]

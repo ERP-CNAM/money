@@ -17,6 +17,12 @@ namespace MoneyApp.Services
         {
             foreach (var dto in invoices)
             {
+                // Skip invalid amounts
+                if (!AcceptableAmounts.IsAllowed(dto.Facture_Montant))
+                {
+                    continue;
+                }
+
                 var existing = await _db.Invoices
                     .FirstOrDefaultAsync(i => i.RefFacture == dto.Ref_Facture);
 
@@ -47,6 +53,12 @@ namespace MoneyApp.Services
         {
             foreach (var dto in payments)
             {
+                // Skip invalid amounts
+                if (!AcceptableAmounts.IsAllowed(dto.Facture_Montant))
+                {
+                    continue;
+                }
+
                 var existing = await _db.Payments
                     .FirstOrDefaultAsync(i => i.FactureRef == dto.Facture_Ref);
 

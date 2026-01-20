@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "Paiement_Date": "2026-07-01",
+    "Facture_Ref": "Facture1",
+    "Facture_Montant": 7.50,
+    "Moyen_Paiement": "PRELEVEMENT"
+  },
+  {
+    "Paiement_Date": "2026-07-01",
+    "Facture_Ref": "Facture2",
+    "Facture_Montant": 2.00,
+    "Moyen_Paiement": "CB"
+  },
+  {
+    "Paiement_Date": "2025-07-31",
+    "Facture_Ref": "INV-2025-07-JOHN-ef0859",
+    "Facture_Montant": 15.00,
+    "Moyen_Paiement": "CARD"
+  },
+  {
+    "Paiement_Date": "2025-08-31",
+    "Facture_Ref": "INV-2025-08-JOHN-ef0859",
+    "Facture_Montant": 15.00,
+    "Moyen_Paiement": "CARD"
+  },
+  {
+    "Paiement_Date": "2025-12-31",
+    "Facture_Ref": "INV-2025-12-JOHN-ef0859",
+    "Facture_Montant": 15.00,
+    "Moyen_Paiement": "CARD"
+  },
+  {
+    "Paiement_Date": "2026-01-31",
+    "Facture_Ref": "INV-2026-01-JOHN-ef0859",
+    "Facture_Montant": 14.25,
+    "Moyen_Paiement": "CARD"
+  }
+]
