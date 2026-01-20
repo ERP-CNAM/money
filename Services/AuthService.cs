@@ -33,32 +33,7 @@ public sealed class AuthService
 
         var root = res.Payload;
 
-        // -----------------------------
-        // FORMAT B (logs CONNECT) :
-        // { request: { success, message }, data: { payloadOut: { token } } }
-        // -----------------------------
-        if (root.TryGetProperty("request", out var requestEl))
-        {
-            var ok = requestEl.TryGetProperty("success", out var sEl) && sEl.ValueKind == JsonValueKind.True;
-            var msg = requestEl.TryGetProperty("message", out var mEl) ? mEl.GetString() : null;
-
-            if (!ok)
-                return (false, msg ?? "Identifiants invalides.");
-
-            if (!root.TryGetProperty("data", out var dataEl))
-                return (false, "Réponse CONNECT invalide: champ 'data' manquant.");
-
-            if (!dataEl.TryGetProperty("payloadOut", out var payloadOutEl))
-                return (false, "Réponse CONNECT invalide: champ 'data.payloadOut' manquant.");
-
-            var token = payloadOutEl.TryGetProperty("token", out var tokenEl) ? tokenEl.GetString() : null;
-
-            if (string.IsNullOrWhiteSpace(token))
-                return (false, "Token manquant (data.payloadOut.token).");
-
-            await _authState.SetJwtAsync(token);
-            return (true, null);
-        }
+       
 
         // -----------------------------
         // FORMAT A (Postman CONNECT) :
