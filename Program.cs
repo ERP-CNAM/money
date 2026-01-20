@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 // Services métier
-builder.Services.AddSingleton<JsonDataService>();
+builder.Services.AddScoped<JsonDataService>();
 builder.Services.AddSingleton<AccountingGenerator>();
 
 // Service telechargement
@@ -33,15 +33,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     Console.WriteLine($"Invoices en DB : {db.Invoices.Count()}");
-}
-
-//db data 
-using (var scope = app.Services.CreateScope())
-{
-    var exporter = scope.ServiceProvider.GetRequiredService<ExportService>();
-
-    await exporter.ExportAllAsync("Data/invoices.json", "Data/payments.json");
-    Console.WriteLine("Export JSON terminé !");
 }
 
 // Pipeline HTTP
